@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--
+    Windows 96
+
+    Copyright (C) The Windows 96 Team 2022. All rights reserved.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Windows 96</title>
+        <meta http-equiv="Cache-control" content="public">
+        <meta http-equiv="Content-Type" value="application/xhtml+xml;charset=utf-8" />
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
+        <link rel="apple-touch-icon" href="/system/resource/app/appletouch-icon.png" id="appletouch_icon">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="icon" sizes="192x192" href="/system/resource/app/appletouch-icon.png" id="app_icon">
+        <!--<link rel="manifest" href="manifest.json" />-->
+
+        <!-- Stylesheets -->
+        <link rel="stylesheet" href="system/resource/stylesheets/normalize.css">
+        <link rel="stylesheet" href="system/libraries/extern/jquery/jquery-ui.min.css">
+        <link rel="stylesheet" href="system/libraries/extern/codemirror/codemirror.css">
+
+        <!-- Third party required libs -->
+        <script src="system/libraries/extern/jszip/jszip.min.js"></script>
+        <script src="system/libraries/kernel/ldb-async.js"></script>
+        <script src="system/libraries/extern/jquery/jquery-3.5.1.min.js"></script>
+        <script src="system/libraries/extern/jquery/jquery-ui.min.js"></script>
+        <script src="system/libraries/extern/jquery/jquerydestroyer.js" bootclean="true"></script>
+        <script src="system/libraries/extern/showdown/showdown.min.js"></script>
+        <script src="system/libraries/extern/socket.io/socket.io.min.js" crossorigin="anonymous"></script>
+
+        <!-- Kernel loader -->
+        <script src="system/libraries/kernel/kl.js"></script>
+    </head>
+    <body oncontextmenu="return false;">
+        <script bootclean="true">
+            window.onerror = function(e) {
+                w96.boot_proc.interrupt(e);
+                window.onerror = function() {};
+            }
+        </script>
+        <style>.desktop { background-position: center !important; } </style>
+        <noscript>
+            <div class="error">
+                <div class="container">
+                    <div class="title">&nbsp;WINDOWS 96&nbsp;</div>
+                    <div class="desc"><br>
+                        Your browser does not have JavaScript support. The bootup process will be terminated.<br>
+                        <br>
+                        * Press any key to terminate the bootup process.<br>
+                        * Press CTRL+ALT+DEL again to restart your computer. You will lose all unsaved information in all applications.<br>
+                        <br>
+                    </div>
+                    <div class="instruction">Press any key to continue _</div>
+                </div>
+            </div>
+        </noscript>
+        <div id="convga" class="vga_console_container"></div>
+        <div id="maingfx">
+
+        </div>
+        <audio id="mainaudio" autoplay></audio>
+        <script>
+            !(async()=>{
+                await window.$loadKernel();
+
+                if(typeof w96 == 'undefined') {
+                    // Kernel failed to load
+                    const convga = document.getElementById('convga');
+                    convga.innerHTML = '[fatal] Windows96 kernel failed to load.';
+                    convga.style.color = '#f22';
+                    return;
+                }
+
+                w96.main();
+
+                /* Analytics and fun stuff */
+                fetch('/vc/ct.js', {cache: 'reload'}); // This is a view counter. It collects zero data except increasing a number.
+
+                /* We like data, but if you don't want these analytics, please,
+                   go to the System Flags application and disable these there.
+                   These analytics do not knowingly collect personal data, only anonymized data, nor do they use cookies.
+                   Additionally, we respect DNT (Do Not Track) headers from your browser if those are enabled.
+                   Check the Privacy Policy on the desktop in the Docs folder for more information. */
+                if (!w96.sys.flags.has('disable_analytics') && location.host == 'windows96.net'){ // Do not trigger on staging.windows96.net
+                    var _paq = window._paq = window._paq || [];
+                    _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+                    _paq.push(["setDomains", ["*.windows96.net"]]);
+                    _paq.push(['disableCookies']);
+                    _paq.push(['trackPageView']);
+                    _paq.push(['enableLinkTracking']);
+                    (function() {
+                       var u="//marisa.sys36.net/analytics/";
+                       _paq.push(['setTrackerUrl', u+'stats.php']);
+                       _paq.push(['setSiteId', '1']);
+                       var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                       g.type='text/javascript'; g.async=true; g.src=u+'stats.js'; s.parentNode.insertBefore(g,s);
+                   })();
+                }
+            })();
+        </script>
+        <!-- Haha funny -->
+	    <img style="width: 0; height: 0; opacity: 0; position: absolute; top: -10em; left: -10em;" src="https://ipv4.games/claim?name=windows96.net" />
+        <img style="width: 0; height: 0; opacity: 0; position: absolute; top: -10em; left: -10em;" src="https://api.ipv4.party/claim?name=windows96.net" />
+    </body>
+</html>
